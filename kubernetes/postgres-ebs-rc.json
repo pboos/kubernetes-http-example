@@ -1,0 +1,66 @@
+{
+  "kind": "ReplicationController",
+  "apiVersion": "v1",
+  "id": "postgres",
+  "metadata": {
+    "name": "postgres",
+    "labels": {
+      "app": "postgres",
+      "role": "master"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "app": "postgres",
+      "role": "master"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "postgres",
+          "role": "master"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "postgres",
+            "image": "postgres",
+            "ports": [
+              {
+                "name": "postgres",
+                "containerPort": 5432
+              }
+            ],
+            "env": [
+              {
+                "name": "POSTGRES_PASSWORD",
+                "value": "mysecretpassword"
+              },
+              {
+                "name": "PGDATA",
+                "value": "/var/lib/postgresql/data/data"
+              }
+            ],
+            "volumeMounts": [
+              {
+                "mountPath": "/var/lib/postgresql/data",
+                "name": "postgres-master-volume"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "postgres-master-volume",
+            "awsElasticBlockStore": {
+              "volumeID": "aws://us-west-2a/vol-9ce51589",
+              "fsType": "ext4"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "id": "ebs-init",
+  "metadata": {
+    "name": "ebs-init",
+    "labels": {
+      "name": "ebs-init"
+    }
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "ebs-init",
+        "image": "pboos/kubernetes-http-example-ebs-init",
+        "ports": [],
+        "env": [],
+        "volumeMounts": [
+          {
+            "mountPath": "/volume/ebs",
+            "name": "postgres-master-volume"
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "postgres-master-volume",
+        "awsElasticBlockStore": {
+          "volumeID": "aws://us-west-2a/vol-9ce51589",
+          "fsType": "ext4"
+        }
+      }
+    ]
+  }
+}

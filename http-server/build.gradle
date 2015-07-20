@@ -1,0 +1,37 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "ch.pboos.HelloWorldHttpServerApp"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "$mainClassName"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task createDockerImage(dependsOn: 'assemble') << {
+    exec("cp $buildDir/libs/kubernetes-http.jar $projectDir/docker-dir/server.jar")
+    exec("docker build -t pboos/kubernetes-http-example $projectDir/docker-dir/")
+
+    // build/libs/kubernetes-http.jar
+}
+
+def exec(command) {
+    def sout = new StringBuffer(), serr = new StringBuffer()
+    def proc = command.execute()
+    proc.consumeProcessOutput(sout, serr)
+    proc.waitForOrKill(1000)
+    println "out> $sout err> $serr"
+}

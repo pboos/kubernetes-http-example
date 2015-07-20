@@ -1,0 +1,23 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "postgres",
+    "labels": {
+      "app": "postgres",
+      "role": "master"
+    }
+  },
+  "spec": {
+    "ports": [
+      {
+        "port": 5432,
+        "targetPort": "postgres"
+      }
+    ],
+    "selector": {
+      "app": "postgres",
+      "role": "master"
+    }
+  }
+}
